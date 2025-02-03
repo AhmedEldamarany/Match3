@@ -8,15 +8,10 @@ public class TileFactory : MonoBehaviour
     public Tile CreateTile(Vector3 position, int id, Transform parent = null)
     {
         Tile tile = Instantiate(tilePrefab, position, Quaternion.identity, parent);
-        if (id >= 0 && id < tileSprites.sprites.Length)
-        {
-            tile.Initialize(id, tileSprites.sprites[id]);
-        }
-        else
-        {
-            Debug.LogWarning("Invalid tile ID, using default sprite.");
-            tile.Initialize(id, null);
-        }
+        
+            tile.Initialize(id, tileSprites.sprites[id],new Vector2Int((int)position.x,(int)position.y));
+        
+        
         return tile;
     }
 }
