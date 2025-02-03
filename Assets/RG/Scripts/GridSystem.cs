@@ -6,8 +6,9 @@ public class GridSystem : MonoBehaviour
 {
     [SerializeField] private int height, width;
     [SerializeField] private float paddingx, paddingy;
-    [SerializeField] private Tile TilePrefab;
+    [SerializeField] private TileFactory tileFactory;
     private Tile[,] grid;
+
     void Start()
     {
         grid = new Tile[width, height];
@@ -15,23 +16,25 @@ public class GridSystem : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-              grid[i,j]= Instantiate(TilePrefab, new Vector3(i, j, 0), Quaternion.identity);
-                grid[i, j].AssignColor(Color.green);
+                int tileId = UnityEngine.Random.Range(0, tileFactory.NumberOfTileTypes);
+                grid[i, j] = tileFactory.CreateTile(new Vector3(i, j, 0), tileId, transform);
             }
+
         }
     }
+
     private void OnEnable()
     {
         EventManager.Subscribe<Tile>(ActionType.TileClicked, OnTileClicked);
     }
+
     private void OnDisable()
     {
         EventManager.Unsubscribe<Tile>(ActionType.TileClicked, OnTileClicked);
     }
+
     private void OnTileClicked(Tile tile)
     {
-        Debug.Log($"Tile clicked {tile.transform.position.x } {tile.transform.position.y}");
+        Debug.Log($"Tile clicked {tile.transform.position.x} {tile.transform.position.y}");
     }
-
-    
 }

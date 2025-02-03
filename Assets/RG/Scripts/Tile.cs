@@ -3,11 +3,19 @@ using UnityEngine;
 public class Tile : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
-    public void AssignColor(Color color)
-    {      
-       spriteRenderer.color= color;
-      
+    public int Id { get; private set; }
+
+    public void Initialize(int id, Sprite sprite)
+    {
+        Id = id;
+        spriteRenderer.sprite = sprite;
     }
+
+    public void AssignColor(Color color)
+    {
+        spriteRenderer.color = color;
+    }
+
     void OnMouseDown()
     {
         EventManager.Raise(ActionType.TileClicked, this);
