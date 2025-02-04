@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -8,9 +9,11 @@ public class GridSystem : MonoBehaviour
     [SerializeField] private int height, width;
     [SerializeField] private TileFactory tileFactory;
     private Tile[,] grid;
+    private IMatchFinder matchFinder;
 
     void Start()
     {
+        matchFinder = new HorizontalMatchFinder();
         InitializeGrid();
     }
 
@@ -52,6 +55,19 @@ public class GridSystem : MonoBehaviour
         yield return StartCoroutine(ScaleDownTile(tile));
         RemoveTile(position);
         yield return StartCoroutine(ShiftTilesDownWithAnimation(position));
+        yield return new WaitForSeconds(0.5f); // Ensuring animations settle
+        List<Vector2Int> affectedPositions = GetAffectedPositions(position);
+        var matches = matchFinder.FindMatches(grid, affectedPositions);
+        if (matches.Count > 0)
+        {
+            foreach (var match in matches)
+            {
+                foreach (var matchedTile in match)
+                {
+                    StartCoroutine(RemoveTileWithAnimation(matchedTile, matchedTile.position));
+                }
+            }
+        }
     }
 
     private IEnumerator ScaleDownTile(Tile tile)
@@ -81,7 +97,9 @@ public class GridSystem : MonoBehaviour
 
     private IEnumerator ShiftTilesDownWithAnimation(Vector2Int position)
     {
-            int maxY=height - 1;
+        int maxY = height - 1;
+        List<Vector2Int> affectedPositions = new List<Vector2Int>();
+
         for (int y = position.y; y < height - 1; y++)
         {
             if (grid[position.x, y + 1] != null)
@@ -91,6 +109,7 @@ public class GridSystem : MonoBehaviour
                 {
                     StartCoroutine(MoveTileWithBounce(grid[position.x, y], new Vector3(position.x, y, 0)));
                     grid[position.x, y].position = new Vector2Int(position.x, y);
+                    affectedPositions.Add(grid[position.x, y].position);
                 }
             }
             else
@@ -99,8 +118,9 @@ public class GridSystem : MonoBehaviour
                 break;
             }
         }
-        grid[position.x, maxY] = null; 
-        yield return null;
+        grid[position.x, maxY] = null;
+
+        yield return new WaitForSeconds(0.5f); // Ensure animations finish
     }
 
     private IEnumerator MoveTileWithBounce(Tile tile, Vector3 targetPosition)
@@ -119,5 +139,18 @@ public class GridSystem : MonoBehaviour
         }
 
         tile.transform.position = targetPosition;
+    }
+
+    private List<Vector2Int> GetAffectedPositions(Vector2Int removedTilePosition)
+    {
+        List<Vector2Int> affectedPositions = new List<Vector2Int>();
+        for (int y = removedTilePosition.y; y < height; y++)
+        {
+            if (grid[removedTilePosition.x, y] != null)
+            {
+                affectedPositions.Add(new Vector2Int(removedTilePosition.x, y));
+            }
+        }
+        return affectedPositions;
     }
 }
