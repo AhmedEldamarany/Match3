@@ -26,6 +26,7 @@ public class MatchHandler
 
     private IEnumerator RemoveMatches(List<Tile> match, GridController gridController, TileAnimationService tileAnimationService)
     {
+        EventManager.Raise(ActionType.TileMatched,true);
         yield return tileAnimationService.ScaleDownMultipleTiles(match.ToArray(), gridController);
     }
 }

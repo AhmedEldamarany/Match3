@@ -28,7 +28,7 @@ public class TileShiftService
             }
         }
         grid[position.x, maxY] = null;
-
+        EventManager.Raise(ActionType.TileShifted, true);
         yield return context.StartCoroutine(animationService.MoveColumnWithBounce(grid, position.x, position.y, maxY));
     }
 
@@ -63,7 +63,7 @@ public class TileShiftService
             maxYDict[x] = maxY;
         }
 
-        // Start bounce animations for each affected column.
+        EventManager.Raise(ActionType.TileShifted, true);
         foreach (var kvp in maxYDict)
         {
             context.StartCoroutine(animationService.MoveColumnWithBounce(grid, kvp.Key, matchedTiles[0].position.y, kvp.Value));

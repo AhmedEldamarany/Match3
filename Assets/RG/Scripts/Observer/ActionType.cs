@@ -1,5 +1,7 @@
 
 public enum ActionType
 {
-    TileClicked
+    TileClicked,
+    TileMatched,
+    TileShifted
 }
