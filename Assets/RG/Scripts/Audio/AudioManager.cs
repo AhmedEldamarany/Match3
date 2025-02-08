@@ -28,25 +28,26 @@ public class AudioManager : MonoBehaviour
     {
         if (isShifting)
         {
-            audioSource.PlayOneShot(shiftSO.audioClip);
+            audioSource?.PlayOneShot(shiftSO.audioClip);
         }
     }
 
     private void OnMatchFound(bool hasMatch)
     {
         if (hasMatch) {
-            audioSource.PlayOneShot(matchSO.audioClip);
+            audioSource?.PlayOneShot(matchSO.audioClip);
         }
     }
 
     private void OnTileClicked(Tile tile) { 
     
-        audioSource.PlayOneShot(clickSO.audioClip);
+        audioSource?.PlayOneShot(clickSO.audioClip);
     }
 
     private void OnDisable()
     {
         EventManager.Unsubscribe<Tile>(ActionType.TileClicked, OnTileClicked);
         EventManager.Unsubscribe<bool>(ActionType.TileMatched, OnMatchFound);
+        EventManager.Unsubscribe<bool>(ActionType.TileShifted, OnTilesShifted);
     }
 }
