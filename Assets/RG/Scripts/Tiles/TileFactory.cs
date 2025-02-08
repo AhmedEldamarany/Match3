@@ -3,7 +3,7 @@ using UnityEngine;
 public class TileFactory : MonoBehaviour
 {
     [SerializeField] private Tile tilePrefab;
-    [SerializeField] private TileSprites tileSprites;
+    [SerializeField] private TileSpritesSO tileSprites;
     public int NumberOfTileTypes => tileSprites.sprites.Length;
     public Tile CreateTile(Vector3 position, int id, Transform parent = null)
     {

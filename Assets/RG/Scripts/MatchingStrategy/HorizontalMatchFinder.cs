@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-
 using UnityEngine;
 
-public interface IMatchFinder
+public interface IMatchFinder//Strategy Design Pattern
 {
-    List<List<Tile>> FindMatches(Tile[,] grid, List<Vector2Int> affectedPositions);
+    List<Tile> FindMatches(Tile[,] grid, List<Vector2Int> affectedPositions);
 }
 
 public class HorizontalMatchFinder : IMatchFinder
@@ -17,26 +16,20 @@ public class HorizontalMatchFinder : IMatchFinder
         this.matchLength = matchLength;
     }
 
-    public List<List<Tile>> FindMatches(Tile[,] grid, List<Vector2Int> affectedPositions)
+    public List<Tile> FindMatches(Tile[,] grid, List<Vector2Int> affectedPositions)
     {
-        HashSet<Tile> checkedTiles = new HashSet<Tile>();
         List<List<Tile>> matches = new List<List<Tile>>();
 
         foreach (var pos in affectedPositions)
         {
-            if (checkedTiles.Contains(grid[pos.x, pos.y])) continue;
             List<Tile> match = CheckHorizontalMatch(grid, pos);
 
             if (match.Count >= matchLength)
             {
-                matches.Add(match);
-                foreach (var tile in match)
-                {
-                    checkedTiles.Add(tile);
-                }
+                return match;
             }
         }
-        return matches;
+        return null;
     }
 
     private List<Tile> CheckHorizontalMatch(Tile[,] grid, Vector2Int startPos)
